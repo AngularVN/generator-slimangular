@@ -46,7 +46,7 @@ SlimangularGenerator.prototype.askFor = function askFor() {
     type: 'list',
     name: 'attrType',
     message: 'What is the type of the attribute?',
-    choices: ['String', 'Text', 'Char', 'Integer', 'Float', 'Boolean', 'Date', 'Enum', 'Email', 'Password'],
+    choices: ['String', 'Text', 'Char', 'Integer', 'Float', 'Boolean', 'DateTime', 'Enum', 'Email', 'Password'],
     default: 'String'
   }, {
     when: function(props) {
@@ -154,7 +154,7 @@ SlimangularGenerator.prototype.askFor = function askFor() {
     }
   }, {
     when: function(props) {
-      return (/Date/).test(props.attrType);
+      return (/DateTime/).test(props.attrType);
     },
     type: 'list',
     name: 'dateConstraint',
@@ -220,6 +220,7 @@ SlimangularGenerator.prototype.files = function files() {
   this.userName = this.generatorConfig.userName;
   this.password = this.generatorConfig.password;
   this.entities = this.generatorConfig.entities;
+  this.authenticate = this.generatorConfig.authenticate;
   this.composer = this.generatorConfig.composer;
   this.entities = _.reject(this.entities, function(model) {
     return model.name === this.name;
@@ -233,16 +234,16 @@ SlimangularGenerator.prototype.files = function files() {
   this.generatorConfigStr = JSON.stringify(this.generatorConfig, null, '\t');
 
 
-  var serverDir = 'server/'
-  var configDir = serverDir + 'config/'
-  var migrationsDir = configDir + 'migrations/'
-  var modelsDir = serverDir + 'models/'
+  var serverDir = 'server/';
+  var configDir = serverDir + 'config/';
+  var migrationsDir = configDir + 'migrations/';
+  var modelsDir = serverDir + 'models/';
   var publicDir = 'public/';
   this.template('_generator.json', 'generator.json');
   this.template('models/_model.php', modelsDir + _s.capitalize(this.name) + '.php');
   this.template('../../app/templates/server/_app.php', serverDir + 'app.php');
-  var d = new Date()
-  var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds()
+  var d = new Date();
+  var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
   this.template('config/migrations/_migration.php', migrationsDir + dateStr + '_Create' + _s.capitalize(pluralize(this.name)) + '.php');
 
   var publicCssDir = publicDir + 'css/';

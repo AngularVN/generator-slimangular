@@ -12,9 +12,9 @@
     },
     "autoload": {
         "classmap": [
-            "server/models"
-        ],
-        "files": ["server/validator.php"]
+            "server/models",
+            "server/helpers"
+        ]
     },
     "config": {
         "bin-dir": "server/bin/"

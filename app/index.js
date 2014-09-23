@@ -73,6 +73,11 @@ SlimangularGenerator.prototype.askFor = function askFor() {
     default: 'password'
   }, {
     type: 'confirm',
+    name: 'authenticate',
+    message: 'Are you want include Authentication?',
+    default: 'false'
+  }, {
+    type: 'confirm',
     name: 'composer',
     message: 'Is PHP composer installed globally (so that "composer update" can be run automatically)?',
     default: false
@@ -90,6 +95,7 @@ SlimangularGenerator.prototype.askFor = function askFor() {
     this.userName = props.userName;
     this.password = props.password;
     this.composer = props.composer;
+    this.authenticate = props.authenticate;
 
     cb();
   }.bind(this));
@@ -105,6 +111,7 @@ SlimangularGenerator.prototype.app = function app() {
     "databaseName": this.databaseName,
     "userName": this.userName,
     "password": this.password,
+    "authenticate": this.authenticate,
     "entities": this.entities,
     "composer": this.composer,
   };
@@ -116,25 +123,30 @@ SlimangularGenerator.prototype.app = function app() {
   this.template('bowerrc', '.bowerrc');
   this.template('Gruntfile.js', 'Gruntfile.js');
   this.copy('gitignore', '.gitignore');
+  this.copy('editorconfig', '.editorconfig');
+  this.copy('jshintrc', '.jshintrc');
 
-  var serverDir = 'server/'
-  var configDir = serverDir + 'config/'
-  var modelsDir = serverDir + 'models/'
-  var migrationsDir = configDir + 'migrations/'
-  var publicDir = 'public/'
-  var vendorDir = 'vendor/'
+  var serverDir = 'server/';
+  var configDir = serverDir + 'config/';
+  var helperDir = serverDir + 'helpers/';
+  var modelsDir = serverDir + 'models/';
+  var migrationsDir = configDir + 'migrations/';
+  var publicDir = 'public/';
+  var vendorDir = 'vendor/';
   this.mkdir(serverDir);
   this.mkdir(configDir);
+  this.mkdir(helperDir);
   this.mkdir(modelsDir);
   this.mkdir(migrationsDir);
   this.mkdir(publicDir);
   this.mkdir(vendorDir);
 
   this.template('_composer.json', 'composer.json');
-  this.template('server/config/_phpmig.php', configDir + 'phpmig.php');
-  this.template('server/config/_app.php', configDir + 'app.php');
   this.template('server/_app.php', serverDir + 'app.php');
-  this.template('server/_validator.php', serverDir + 'validator.php');
+  this.template('server/config/_app.php', configDir + 'app.php');
+  this.template('server/config/_phpmig.php', configDir + 'phpmig.php');
+  this.template('server/helpers/_validator.php', helperDir + 'validator.php');
+  this.template('server/helpers/_restresponse.php', helperDir + 'restresponse.php');
   this.template('public/_index.php', publicDir + 'index.php');
   this.copy('public/htaccess', publicDir + '.htaccess');
 
@@ -149,9 +161,10 @@ SlimangularGenerator.prototype.app = function app() {
   this.template('public/js/_app.js', publicJsDir + 'app.js');
   this.template('public/js/home/_home-controller.js', publicJsDir + 'home/home-controller.js');
   this.template('public/views/home/_home.html', publicViewDir + 'home/home.html');
-};
+  if (this.authenticate) {
+    var d = new Date();
+    var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
+    this.template('server/config/_authtoken.php', migrationsDir + dateStr + '_CreateAuthToken' + '.php');
+  }
 
-SlimangularGenerator.prototype.projectfiles = function projectfiles() {
-  this.copy('editorconfig', '.editorconfig');
-  this.copy('jshintrc', '.jshintrc');
 };

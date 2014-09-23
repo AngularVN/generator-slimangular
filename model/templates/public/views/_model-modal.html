@@ -43,7 +43,7 @@
                 <span class="error" ng-show="form.<%= attr.attrName.replace(" ", "_").toLowerCase() %>.$error.max">Must be less than or equal to <%= attr.max %>.</span>
                 <% } else if (attr.attrType === "Boolean") { %>
                 <input type="checkbox" name="<%= attr.attrName.replace(" ", "_").toLowerCase() %>" ng-model="<%= name %>.<%= attr.attrName.replace(" ", "_").toLowerCase() %>"<% if (attr.required) { %> required<% } %> />
-                <% } else if (attr.attrType === "Date") { %>
+                <% } else if (attr.attrType === "DateTime") { %>
                 <input type="text" class="form-control" placeholder="<%= attr.attrName %>" name="<%= attr.attrName.replace(" ", "_").toLowerCase() %>" ui-date="<%= attr.attrName.replace(" ", "_").toLowerCase() %>DateOptions" ui-date-format="yy-mm-dd" ng-model="<%= name %>.<%= attr.attrName.replace(" ", "_").toLowerCase() %>"<% if (attr.required) { %> required<% } %> />
                 <% } else if (attr.attrType === "Enum") { _.each(attr.enumValues, function (value) { %>
                 <label class="radio"><input type="radio" name="<%= attr.attrName.replace(" ", "_").toLowerCase() %>" value="<%= value %>" ng-model="<%= name %>.<%= attr.attrName.replace(" ", "_").toLowerCase() %>"<% if (attr.required) { %> required<% } %> /> <%= value %></label><% })} %>
