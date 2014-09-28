@@ -8,7 +8,7 @@ angular.module('<%= baseName %>')
         controller: '<%= _.capitalize(name) %>Ctrl',
         resolve:{
           resolved<%= _.capitalize(name) %>: ['<%= _.capitalize(name) %>', function (<%= _.capitalize(name) %>) {
-            return <%= _.capitalize(name) %>.query();
+            return <%= _.capitalize(name) %>.getList();
           }]
         }
       })

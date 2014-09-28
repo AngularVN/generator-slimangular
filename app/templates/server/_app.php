@@ -43,7 +43,7 @@ $app->get('/', function() use ($app) {
 });
 
 <% if (authenticate) { %>
-$app->group('/auth', function() use ($app) {
+$app->group('/<%= baseName %>/auth', function() use ($app) {
 	$app->post('/login', function() use($app) {
 		try {
 			$body = $app->request->getBody();
@@ -61,7 +61,8 @@ $app->group('/auth', function() use ($app) {
 				if ($authToken = AuthToken::login($request["username"], $request["password"])) {
 					$app->response->status(201);
 					echo $authToken->toJson();
-				}				
+				}
+				else echo json_encode(array("code" =>401, "message" => "Invalid username or password"));
 			}
 			else echo json_encode(array("code" =>400, "message" => $errors));
 		} catch (Exception $e) {

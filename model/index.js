@@ -254,6 +254,7 @@ SlimangularGenerator.prototype.files = function files() {
   this.mkdir(publicEntityJsDir);
   this.mkdir(publicEntityViewDir);
   this.template('../../app/templates/client/_index.html', publicDir + 'index.html');
+  this.template('../../app/templates/client/views/_nav.html', publicViewDir + 'nav.html');
   this.template('client/js/_model-controller.js', publicEntityJsDir + this.name + '-controller.js');
   this.template('client/js/_model-router.js', publicEntityJsDir + this.name + '-router.js');
   this.template('client/js/_model-service.js', publicEntityJsDir + this.name + '-service.js');
