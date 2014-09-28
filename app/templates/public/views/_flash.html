@@ -1,0 +1,6 @@
+<div id="messages" ng-controller="FlashCtrl">
+    <div class="alert alert-dismissable" ng-class="msg.class" ng-click="close(id);" ng-repeat="(id, msg) in messages">
+        <button aria-hidden="true" class="close" type="button">×</button>
+        <span ng-bind-html="msg.msg"></span>
+    </div>
+</div>
