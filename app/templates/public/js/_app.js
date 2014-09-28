@@ -1,5 +1,15 @@
 // Declare app level module which depends on filters, and services
-angular.module('<%= baseName %>', ['ngResource', 'ngRoute', 'ngCookies', 'ui.bootstrap', 'ui.date'])
+angular.module('<%= baseName %>', [
+	'ngResource',
+	'ngRoute',
+	'ngCookies',
+	"<%= baseName %>.filters",
+	"<%= baseName %>.services",
+	"<%= baseName %>.directives",
+	"<%= baseName %>.controllers",
+	'ui.bootstrap',
+	'ui.date'
+])
 	.constant("DOMAIN", "")
 	.constant("API_KEY", "1234567890")
 	.constant("SESSION_COOKIE_NAME", "session")
