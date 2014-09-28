@@ -2,7 +2,7 @@
 
 use Phpmig\Migration\Migration;
 
-class Create<%= pluralize(name).replace(/_/g, " ").replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace(/\s/g, "") %> extends Migration
+class Create<%= _.classify(name) %> extends Migration
 {
     protected $tableName;
 

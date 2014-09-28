@@ -1,6 +1,6 @@
 <?php
 
-class UserCredential extends Eloquent {
+class UserCredential extends Illuminate\Database\Eloquent\Model {
 
 	/**
 	 * The database table used by the model.

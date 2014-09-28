@@ -1,6 +1,6 @@
 <?php
 
-class <%= name.replace(/_/g, " ").replace(/\w\S*/g, function(t){return t.charAt(0).toUpperCase() + t.substr(1).toLowerCase();}).replace(/\s/g, "") %> extends Illuminate\Database\Eloquent\Model {
+class <%= _.classify(name) %> extends Illuminate\Database\Eloquent\Model {
 
     protected $table = "<%= pluralize(name) %>";
     public $timestamps = false;

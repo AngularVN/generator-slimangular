@@ -238,13 +238,13 @@ SlimangularGenerator.prototype.files = function files() {
   var configDir = serverDir + 'config/';
   var migrationsDir = configDir + 'migrations/';
   var modelsDir = serverDir + 'models/';
-  var publicDir = 'public/';
+  var publicDir = 'client/';
   this.template('_generator.json', 'generator.json');
-  this.template('models/_model.php', modelsDir + this.name.replace(/_/g, " ").replace(/\w\S*/g, function(t){return t.charAt(0).toUpperCase() + t.substr(1).toLowerCase();}).replace(/\s/g, "") + '.php');
+  this.template('models/_model.php', modelsDir + _s.classify(this.name) + '.php');
   this.template('../../app/templates/server/_app.php', serverDir + 'app.php');
   var d = new Date();
   var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
-  this.template('config/migrations/_migration.php', migrationsDir + dateStr + '_Create' + _s.capitalize(pluralize(this.name)) + '.php');
+  this.template('config/migrations/_migration.php', migrationsDir + dateStr + '_Create' + _s.classify(this.name) + '.php');
 
   var publicCssDir = publicDir + 'css/';
   var publicJsDir = publicDir + 'js/';
@@ -253,10 +253,10 @@ SlimangularGenerator.prototype.files = function files() {
   var publicEntityViewDir = publicViewDir + this.name + '/';
   this.mkdir(publicEntityJsDir);
   this.mkdir(publicEntityViewDir);
-  this.template('../../app/templates/public/_index.html', publicDir + 'index.html');
-  this.template('public/js/_model-controller.js', publicEntityJsDir + this.name + '-controller.js');
-  this.template('public/js/_model-router.js', publicEntityJsDir + this.name + '-router.js');
-  this.template('public/js/_model-service.js', publicEntityJsDir + this.name + '-service.js');
-  this.template('public/views/_models.html', publicEntityViewDir + pluralize(this.name) + '.html');
-  this.template('public/views/_model-modal.html', publicEntityViewDir + this.name + '-modal.html');
+  this.template('../../app/templates/client/_index.html', publicDir + 'index.html');
+  this.template('client/js/_model-controller.js', publicEntityJsDir + this.name + '-controller.js');
+  this.template('client/js/_model-router.js', publicEntityJsDir + this.name + '-router.js');
+  this.template('client/js/_model-service.js', publicEntityJsDir + this.name + '-service.js');
+  this.template('client/views/_models.html', publicEntityViewDir + pluralize(this.name) + '.html');
+  this.template('client/views/_model-modal.html', publicEntityViewDir + this.name + '-modal.html');
 };

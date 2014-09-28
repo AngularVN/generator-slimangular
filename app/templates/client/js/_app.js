@@ -129,6 +129,9 @@ angular.module('<%= baseName %>', [
 				templateUrl: 'views/home/home.html',
 				controller: 'HomeCtrl'
 			})
+			.when('/signin', {
+				templateUrl: 'views/signin.html',
+			})
 			.otherwise({
 				redirectTo: '/'
 			});

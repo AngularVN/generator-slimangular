@@ -121,7 +121,7 @@ SlimangularGenerator.prototype.app = function app() {
   this.template('_package.json', 'package.json');
   this.template('_bower.json', 'bower.json');
   this.template('bowerrc', '.bowerrc');
-  this.template('Gruntfile.js', 'Gruntfile.js');
+  this.template('Gruntfile.coffee', 'Gruntfile.coffee');
   this.copy('gitignore', '.gitignore');
   this.copy('editorconfig', '.editorconfig');
   this.copy('jshintrc', '.jshintrc');
@@ -131,15 +131,15 @@ SlimangularGenerator.prototype.app = function app() {
   var helperDir = serverDir + 'helpers/';
   var modelsDir = serverDir + 'models/';
   var migrationsDir = configDir + 'migrations/';
-  var publicDir = 'public/';
-  var vendorDir = 'vendor/';
+  var publicDir = 'client/';
+  var lessDir = publicDir + 'styles-less/';
   this.mkdir(serverDir);
   this.mkdir(configDir);
   this.mkdir(helperDir);
   this.mkdir(modelsDir);
   this.mkdir(migrationsDir);
   this.mkdir(publicDir);
-  this.mkdir(vendorDir);
+  this.mkdir(lessDir);
 
   this.template('_composer.json', 'composer.json');
   this.template('server/_app.php', serverDir + 'app.php');
@@ -147,8 +147,11 @@ SlimangularGenerator.prototype.app = function app() {
   this.template('server/config/_phpmig.php', configDir + 'phpmig.php');
   this.template('server/helpers/_validator.php', helperDir + 'validator.php');
   this.template('server/helpers/_restresponse.php', helperDir + 'restresponse.php');
-  this.template('public/_index.php', publicDir + 'index.php');
-  this.copy('public/htaccess', publicDir + '.htaccess');
+  this.template('client/_index.php', publicDir + 'index.php');
+  this.copy('client/htaccess', publicDir + '.htaccess');
+  this.copy('client/favicon.ico', publicDir + 'favicon.ico');
+  this.copy('client/404.html', publicDir + '404.html');
+  this.copy('client/robots.txt', publicDir + 'robots.txt');
 
   var publicCssDir = publicDir + 'css/';
   var publicJsDir = publicDir + 'js/';
@@ -156,20 +159,20 @@ SlimangularGenerator.prototype.app = function app() {
   this.mkdir(publicCssDir);
   this.mkdir(publicJsDir);
   this.mkdir(publicViewDir);
-  this.copy('public/css/app.css', publicCssDir + 'app.css');
-  this.template('public/js/_app.js', publicJsDir + 'app.js');
-  this.template('public/js/_filters.js', publicJsDir + 'filters.js');
-  this.template('public/js/_services.js', publicJsDir + 'services.js');
-  this.template('public/js/_directives.js', publicJsDir + 'directives.js');
-  this.template('public/js/_controllers.js', publicJsDir + 'controllers.js');
+  this.copy('client/styles-less/app.less', lessDir + 'app.less');
+  this.template('client/js/_app.js', publicJsDir + 'app.js');
+  this.template('client/js/_filters.js', publicJsDir + 'filters.js');
+  this.template('client/js/_services.js', publicJsDir + 'services.js');
+  this.template('client/js/_directives.js', publicJsDir + 'directives.js');
+  this.template('client/js/_controllers.js', publicJsDir + 'controllers.js');
 
-  this.template('public/_index.html', publicDir + 'index.html');
-  this.template('public/views/_nav.html', publicViewDir + 'nav.html');
-  this.template('public/views/_flash.html', publicViewDir + 'flash.html');
-  this.template('public/views/_signin.html', publicViewDir + 'signin.html');
-  this.template('public/views/_header.html', publicViewDir + 'header.html');
-  this.template('public/js/home/_home-controller.js', publicJsDir + 'home/home-controller.js');
-  this.template('public/views/home/_home.html', publicViewDir + 'home/home.html');
+  this.template('client/_index.html', publicDir + 'index.html');
+  this.template('client/views/_nav.html', publicViewDir + 'nav.html');
+  this.template('client/views/_flash.html', publicViewDir + 'flash.html');
+  this.template('client/views/_signin.html', publicViewDir + 'signin.html');
+  this.template('client/views/_header.html', publicViewDir + 'header.html');
+  this.template('client/js/home/_home-controller.js', publicJsDir + 'home/home-controller.js');
+  this.template('client/views/home/_home.html', publicViewDir + 'home/home.html');
   if (this.authenticate) {
     var d = new Date();
     var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
