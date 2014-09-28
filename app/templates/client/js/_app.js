@@ -33,7 +33,7 @@ angular.module('<%= baseName %>', [
 			return function(promise) {
 				return promise.then((function(response) {
 					var currentPath, payloadData, ref;
-					if (response.headers()["content-type"] === "application/json; charset=utf-8" || response.headers()["content-type"] === "application/json") {
+					if (response.headers()["content-type"] === "application/json; charset=utf-8" || response.headers()["content-type"] === "application/json" || response.headers()["content-type"] === "text/html") {
 						if (response.data.code === 200 || response.data.code === 302) {
 							payloadData = response.data.payload;
 							response.data = payloadData;
