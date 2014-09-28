@@ -4,6 +4,6 @@ angular.module('<%= baseName %>', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.
     $routeProvider
       .when('/', {
         templateUrl: 'views/home/home.html',
-        controller: 'HomeController'})
+        controller: 'HomeCtrl'})
       .otherwise({redirectTo: '/'});
   }]);

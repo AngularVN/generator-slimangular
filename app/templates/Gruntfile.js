@@ -2,15 +2,15 @@
 
 var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
-  require('time-grunt')(grunt); 
+  require('time-grunt')(grunt);
 
   grunt.initConfig({
     yeoman: {
       // configurable paths
       app: require('./bower.json').appPath || 'public',
-      dist: 'public'
+      dist: 'dist'
     },
     sync: {
       dist: {
@@ -36,15 +36,13 @@ module.exports = function (grunt) {
       }
     },
     connect: {
-      proxies: [
-        {
-          context: '/<%= baseName %>',
-          host: 'localhost',
-          port: 8080,
-          https: false,
-          changeOrigin: false
-        }
-      ],
+      proxies: [{
+        context: '/<%= baseName %>',
+        host: 'localhost',
+        port: 8080,
+        https: false,
+        changeOrigin: false
+      }],
       options: {
         port: 9000,
         // Change this to '0.0.0.0' to access the server from outside.
@@ -57,7 +55,7 @@ module.exports = function (grunt) {
           base: [
             '<%%= yeoman.app %>'
           ],
-          middleware: function (connect) {
+          middleware: function(connect) {
             return [
               proxySnippet,
               connect.static(require('path').resolve('public'))
@@ -85,13 +83,6 @@ module.exports = function (grunt) {
         }]
       },
     },
-    // Test settings
-    karma: {
-      unit: {
-        configFile: 'test/config/karma.conf.js',
-        singleRun: true
-      }
-    },
     bowercopy: {
       options: {
         destPrefix: '<%%= yeoman.app %>'
@@ -105,7 +96,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', function (target) {
+  grunt.registerTask('default', function(target) {
     grunt.task.run([
       //'copy:dist',
       'configureProxies',

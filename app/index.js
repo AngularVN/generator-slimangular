@@ -50,7 +50,7 @@ SlimangularGenerator.prototype.askFor = function askFor() {
     name: 'databaseType',
     message: 'Which database would you like to use?',
     choices: ['MySQL', 'SQLite', 'PostgreSQL'],
-    default: 'MySQL'
+    default: 'SQLite'
   }, {
     type: 'input',
     name: 'hostName',
@@ -165,6 +165,9 @@ SlimangularGenerator.prototype.app = function app() {
     var d = new Date();
     var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
     this.template('server/config/_authtoken.php', migrationsDir + dateStr + '_CreateAuthToken' + '.php');
+    this.copy('server/models/_AuthToken.php', modelsDir + 'AuthToken.php');
+    this.copy('server/models/_Role.php', modelsDir + 'Role.php');
+    this.copy('server/models/_User.php', modelsDir + 'User.php');
+    this.copy('server/models/_UserCredential.php', modelsDir + 'UserCredential.php');
   }
-
 };

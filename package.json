@@ -18,7 +18,8 @@
   },
   "files": [
     "app",
-    "model"
+    "model",
+    "rebuild"
   ],
   "keywords": [
     "yeoman-generator",

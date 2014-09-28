@@ -1,3 +1,3 @@
 angular.module('<%= baseName %>')
-  .controller('HomeController', ['$scope', function ($scope) {
+  .controller('HomeCtrl', ['$scope', function ($scope) {
   }]);
