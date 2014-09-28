@@ -4,7 +4,7 @@ require '../vendor/autoload.php';
 require 'config/app.php';
 
 <% if (authenticate) { %>
-$authenticate = function ($role = 'member') {
+function authenticate($role = 'member') {
 	return function () use ($role) {
 		$headers = getallheaders();
 		$app = \Slim\Slim::getInstance();
@@ -16,7 +16,7 @@ $authenticate = function ($role = 'member') {
 					if (!$authToken->hasRole($role)){
 						$error = "User not permission.";
 					}
-					return $authToken->roles;
+					return $authToken;
 				}
 				else {
 					$error = "Session token has expired.";
@@ -41,19 +41,63 @@ $app->get('/', function() use ($app) {
 	readfile('index.html');
 	$app->stop();
 });
-$app->contentType('application/json;charset=utf-8');
+
+<% if (authenticate) { %>
+$app->group('/auth', function() use ($app) {
+	$app->post('/login', function() use($app) {
+		try {
+			$body = $app->request->getBody();
+			$request = json_decode($body, true);
+			$errors = array();
+			$validator = Validator::make(
+				$request,
+				array(
+					"username" => "required",
+					"password" => "required",
+				)
+			);
+			if ($validator->fails()) $errors = array_merge($errors, $validator->messages()->all('<li>:message</li>'));
+			if (count($errors) == 0) {
+				if ($authToken = AuthToken::login($request["username"], $request["password"])) {
+					$app->response->status(201);
+					echo $authToken->toJson();
+				}				
+			}
+			else echo json_encode(array("code" =>400, "message" => $errors));
+		} catch (Exception $e) {
+			$app->response()->status(400);
+			$app->response()->header('X-Status-Reason', $e->getMessage());
+		}
+	});
+
+	$app->post('/logout', function() use($app) {
+		try {
+			$authToken = App::make('authToken');
+			$authToken->expired_at = date('Y-m-d H:i:s');
+			$authToken->updated_at = $authToken->expired_at;
+			$authToken->save();
+			$app->response->status(204);
+		} catch (Exception $e) {
+			$app->response()->status(400);
+			$app->response()->header('X-Status-Reason', $e->getMessage());
+		}
+	});
+});
+<% } %>
+
 <% _.each(entities, function (entity) { %>
 
-// Route <%= baseName %> / <%= pluralize(entity.name) %>
-$app->group('/<%= baseName %>', function () use ($app) {
+/* begin <%= baseName %>/<%= pluralize(entity.name) %> */
+$app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> function () use ($app) {
 	// Get ALL <%= pluralize(entity.name) %>
+	$app->contentType('application/json;charset=utf-8');
 	$app->get('/<%= pluralize(entity.name) %>', function() {
 		$<%= pluralize(entity.name) %> = <%= _.capitalize(entity.name) %>::all();
 		echo $<%= pluralize(entity.name) %>->toJson();
 	});
 
 	// Create <%= pluralize(entity.name) %>
-	$app->post('/<%= pluralize(entity.name) %>', function() use($app) {
+	$app->post('/<%= pluralize(entity.name) %>',<%= (authenticate)? " authenticate(),":"" %> function() use($app) {
 		try {
 				$body = $app->request->getBody();
 				$request = json_decode($body, true);
@@ -99,7 +143,7 @@ $app->group('/<%= baseName %>', function () use ($app) {
 	});
 
 	// Get <%= pluralize(entity.name) %> with ID
-	$app->get('/<%= pluralize(entity.name) %>/:id', function($id) use($app) {
+	$app->get('/<%= pluralize(entity.name) %>/:id',<%= (authenticate)? " authenticate(),":"" %> function($id) use($app) {
 		$<%= entity.name %> = <%= _.capitalize(entity.name) %>::find($id);
 		if (is_null($<%= entity.name %>)) {
 			$app->response->status(404);
@@ -160,7 +204,7 @@ $app->group('/<%= baseName %>', function () use ($app) {
 	})->conditions(array('id' => '[0-9]+'));
 
 	// Delete <%= pluralize(entity.name) %> with ID
-	$app->delete('/<%= pluralize(entity.name) %>/:id', function($id) use($app) {
+	$app->delete('/<%= pluralize(entity.name) %>/:id',<%= (authenticate)? " authenticate(),":"" %> function($id) use($app) {
 		try {
 			$<%= entity.name %> = <%= _.capitalize(entity.name) %>::find($id);
 			if (is_null($<%= entity.name %>)) {
@@ -176,5 +220,6 @@ $app->group('/<%= baseName %>', function () use ($app) {
 		}
 	})->conditions(array('id' => '[0-9]+'));
 });
+/* end <%= baseName %>/<%= pluralize(entity.name) %> */
 <% }); %>
 $app->run();

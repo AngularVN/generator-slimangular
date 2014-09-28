@@ -240,7 +240,7 @@ SlimangularGenerator.prototype.files = function files() {
   var modelsDir = serverDir + 'models/';
   var publicDir = 'public/';
   this.template('_generator.json', 'generator.json');
-  this.template('models/_model.php', modelsDir + _s.capitalize(this.name) + '.php');
+  this.template('models/_model.php', modelsDir + this.name.replace(/_/g, " ").replace(/\w\S*/g, function(t){return t.charAt(0).toUpperCase() + t.substr(1).toLowerCase();}).replace(/\s/g, "") + '.php');
   this.template('../../app/templates/server/_app.php', serverDir + 'app.php');
   var d = new Date();
   var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
