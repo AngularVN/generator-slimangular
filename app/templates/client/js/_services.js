@@ -77,32 +77,32 @@ angular.module("<%= baseName %>.services", [])
 				register: true
 			},
 			find: function(params) {
-				return $http.get(DOMAIN + "/api/users", {
+				return $http.get(DOMAIN + "/<%= baseName %>/users", {
 					params: params
 				});
 			},
 			login: function(params) {
-				return $http.post(DOMAIN + "/auth/login", params);
+				return $http.post(DOMAIN + "/<%= baseName %>/auth/login", params);
 			},
 			create: function(params) {
-				return $http.post(DOMAIN + "/api/users", params);
+				return $http.post(DOMAIN + "/<%= baseName %>/users", params);
 			},
 			getMe: function() {
-				return $http.get(DOMAIN + "/api/users/me");
+				return $http.get(DOMAIN + "/<%= baseName %>/users/me");
 			},
 			get: function(id, params) {
-				return $http.get(DOMAIN + "/api/users/" + id, {
+				return $http.get(DOMAIN + "/<%= baseName %>/users/" + id, {
 					params: params
 				});
 			},
 			updateMe: function(params) {
-				return $http.put(DOMAIN + "/api/users/me", params);
+				return $http.put(DOMAIN + "/<%= baseName %>/users/me", params);
 			},
 			update: function(id, params) {
-				return $http.put(DOMAIN + "/api/users/" + id, params);
+				return $http.put(DOMAIN + "/<%= baseName %>/users/" + id, params);
 			},
 			"delete": function(id) {
-				return $http["delete"](DOMAIN + "/api/users/" + id);
+				return $http["delete"](DOMAIN + "/<%= baseName %>/users/" + id);
 			}
 		};
 		return exports;

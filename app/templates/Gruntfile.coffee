@@ -316,6 +316,7 @@ module.exports = (grunt) ->
             "open"
             "connect:dist:keepalive"])  if target is "dist"
         grunt.task.run [
+            "configureProxies"
             "clean:server"
             "concurrent:lessServer"
             "connect:livereload"
