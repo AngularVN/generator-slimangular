@@ -69,7 +69,6 @@ module.exports = (grunt) ->
 
             livereload:
                 options:
-                    open: true
                     base: ["<%%= yeoman.app %>"]
                     middleware: (connect) ->
                         [
@@ -150,7 +149,7 @@ module.exports = (grunt) ->
                 files: [
                     expand: true
                     cwd: "<%%= yeoman.app %>/styles-less"
-                    src: "main.less"
+                    src: "app.less"
                     dest: ".tmp/styles"
                     ext: ".css"                    
                 ]
@@ -161,7 +160,7 @@ module.exports = (grunt) ->
                 files: [
                     expand: true
                     cwd: "<%%= yeoman.app %>/styles-less"
-                    src: "main.less"
+                    src: "app.less"
                     dest: ".tmp/styles"
                     ext: ".css"                    
                 ]

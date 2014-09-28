@@ -136,11 +136,11 @@ angular.module("<%= baseName %>.directives", [])
 							return $element.addClass('body-home');
 						case '/404':
 						case '/500':
-						case '/user/signin':
-						case '/user/signup':
-						case '/user/forgot':
+						case '/signin':
+						case '/signup':
+						case '/forgot':
 							return $element.addClass('body-special');
-						case '/user/lock-screen':
+						case '/lock':
 							return $element.addClass('body-special body-lock');
 						case '/tasks':
 							return $element.addClass('body-tasks');

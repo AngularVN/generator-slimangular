@@ -81,6 +81,9 @@ angular.module("<%= baseName %>.services", [])
 					params: params
 				});
 			},
+			login: function(params) {
+				return $http.post(DOMAIN + "/auth/login", params);
+			},
 			create: function(params) {
 				return $http.post(DOMAIN + "/api/users", params);
 			},
