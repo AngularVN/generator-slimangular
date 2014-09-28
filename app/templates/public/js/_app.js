@@ -1,5 +1,5 @@
 // Declare app level module which depends on filters, and services
-angular.module('<%= baseName %>', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
+angular.module('<%= baseName %>', ['ngResource', 'ngRoute', 'ngCookies', 'ui.bootstrap', 'ui.date'])
 	.constant("DOMAIN", "")
 	.constant("API_KEY", "1234567890")
 	.constant("SESSION_COOKIE_NAME", "session")
@@ -127,5 +127,110 @@ angular.module('<%= baseName %>', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.
 		'$scope',
 		function($scope) {
 			return
+		}
+	])
+	.factory("userResource", [
+		"$http", "DOMAIN",
+		function($http, DOMAIN) {
+			var exports;
+			exports = {
+				defaults: {
+					group_id: 3,
+					role_id: 6,
+					status: "pending",
+					credential: {
+						email: "",
+						password: ""
+					},
+					meta: {
+						first_name: "",
+						last_name: ""
+					},
+					register: true
+				},
+				find: function(params) {
+					return $http.get(DOMAIN + "/api/users", {
+						params: params
+					});
+				},
+				create: function(params) {
+					return $http.post(DOMAIN + "/api/users", params);
+				},
+				getMe: function() {
+					return $http.get(DOMAIN + "/api/users/me");
+				},
+				get: function(id, params) {
+					return $http.get(DOMAIN + "/api/users/" + id, {
+						params: params
+					});
+				},
+				updateMe: function(params) {
+					return $http.put(DOMAIN + "/api/users/me", params);
+				},
+				update: function(id, params) {
+					return $http.put(DOMAIN + "/api/users/" + id, params);
+				},
+				"delete": function(id) {
+					return $http["delete"](DOMAIN + "/api/users/" + id);
+				}
+			};
+			return exports;
+		}
+	])
+	.factory("securityService", [
+		"userResource", "$http", "$cookieStore", "$rootScope", "SESSION_COOKIE_NAME",
+		function(userResource, $http, $cookieStore, $rootScope, SESSION_COOKIE_NAME) {
+			var exports, priv;
+			priv = {
+				session: null,
+				currentUser: null,
+				requestSent: false
+			};
+			exports = {
+				init: function(session) {
+					var authorization;
+					priv.requestSent = false;
+					if (!session) {
+						if ($cookieStore.get(SESSION_COOKIE_NAME)) {
+							session = angular.fromJson($cookieStore.get(SESSION_COOKIE_NAME)) || null;
+						}
+					} else {
+						$cookieStore.put(SESSION_COOKIE_NAME, angular.toJson(session));
+					}
+					priv.session = session;
+					if (priv.session && priv.session.id) {
+						authorization = priv.session.id;
+					}
+					$http.defaults.headers.common["Authorization"] = authorization;
+				},
+				isAuthenticated: function() {
+					return !!priv.session || !!priv.currentUser;
+				},
+				getSession: function() {
+					return priv.session;
+				},
+				requestCurrentUser: function() {
+					if (!priv.requestSent) {
+						priv.requestSent = true;
+						userResource.getMe().success(function(payload) {
+							priv.currentUser = payload;
+							$rootScope.$broadcast("authChange");
+						});
+					}
+					return priv.currentUser;
+				},
+				setUser: function(user) {
+					priv.currentUser = user;
+				},
+				destroySession: function() {
+					priv.session = null;
+					priv.currentUser = null;
+					priv.requestSent = false;
+					$cookieStore.remove(SESSION_COOKIE_NAME);
+					$http.defaults.headers.common["Authorization"] = "";
+					$rootScope.$broadcast("authChange");
+				}
+			};
+			return exports;
 		}
 	]);
