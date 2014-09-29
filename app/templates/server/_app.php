@@ -6,15 +6,16 @@ require 'config/app.php';
 <% if (authenticate) { %>
 function authenticate($role = 'member') {
 	return function () use ($role) {
-		$headers = getallheaders();
-		$app = \Slim\Slim::getInstance();
-		$hash = isset($headers['Authorization']) ? $headers['Authorization'] : "";
-		if (!empty($hash)) {
+		$a = apache_request_headers();
+		//$hash = isset($a["authorization"]) ? $a['authorization'] : "";
+		foreach ($a as $key => $value) if ($key=="authorization") $hash = $value;
+
+		if ($hash) {
 			$authToken = AuthToken::with('user')->find($hash);
 			if ($authToken) {
 				if (!$authToken->isExpired()) {
-					if (!$authToken->hasRole($role)){
-						$error = "User not permission.";
+					if (!$authToken->user->hasRole($role)){
+						$error = "Unauthorized.";
 					}
 					return $authToken;
 				}
@@ -25,12 +26,14 @@ function authenticate($role = 'member') {
 			else {
 				$error = "Invalid session token.";
 			}
+		} else {
+			$error = "Require Authorization";
 		}
-		else {
-			$error = "Session token is required.";
-			
-		}
-		$app->halt(401);
+		$app = new \Slim\Slim();
+		$app->contentType('application/json;charset=utf-8');
+		$resp = new RestResponse('401', $error);
+		echo $resp->toJson();
+		$app->stop();
 	};
 };
 <% } %>
@@ -44,6 +47,7 @@ $app->get('/', function() use ($app) {
 
 <% if (authenticate) { %>
 $app->group('/<%= baseName %>/auth', function() use ($app) {
+	$app->contentType('application/json;charset=utf-8');
 	$app->post('/login', function() use($app) {
 		try {
 			$body = $app->request->getBody();
@@ -60,11 +64,18 @@ $app->group('/<%= baseName %>/auth', function() use ($app) {
 			if (count($errors) == 0) {
 				if ($authToken = AuthToken::login($request["username"], $request["password"])) {
 					$app->response->status(201);
-					echo $authToken->toJson();
+					$resp = new RestResponse('200', "Ok", $authToken->toArray());
+					echo $resp->toJson();
 				}
-				else echo json_encode(array("code" =>401, "message" => "Invalid username or password"));
+				else {
+					$resp = new RestResponse('401', "Invalid username or password");
+					echo $resp->toJson();
+				}
 			}
-			else echo json_encode(array("code" =>400, "message" => $errors));
+			else {
+				$resp = new RestResponse('400', $errors);
+				echo $resp->toJson();
+			}
 		} catch (Exception $e) {
 			$app->response()->status(400);
 			$app->response()->header('X-Status-Reason', $e->getMessage());
@@ -93,7 +104,7 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 	// Get ALL <%= pluralize(entity.name) %>
 	$app->contentType('application/json;charset=utf-8');
 	$app->get('/<%= pluralize(entity.name) %>', function() {
-		$<%= pluralize(entity.name) %> = <%= _.capitalize(entity.name) %>::all();
+		$<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::all();
 		echo $<%= pluralize(entity.name) %>->toJson();
 	});
 
@@ -129,7 +140,7 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 				);
 				if ($validator->fails()) $errors = array_merge($errors, $validator->messages()->all('<li>:message</li>'));
 				if (count($errors) == 0) {
-					$<%= entity.name %> = new <%= _.capitalize(entity.name) %>;
+					$<%= entity.name %> = new <%= _.classify(entity.name) %>;
 					<% _.each(entity.attrs, function (attr) { %>
 					$<%= entity.name%>-><%= attr.attrName.replace(" ", "_").toLowerCase() %> = isset($request['<%= attr.attrName.replace(" ", "_").toLowerCase() %>'])?$request['<%= attr.attrName.replace(" ", "_").toLowerCase() %>']:NULL;<% }); %>
 					$<%= entity.name %>->save();
@@ -145,7 +156,7 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 
 	// Get <%= pluralize(entity.name) %> with ID
 	$app->get('/<%= pluralize(entity.name) %>/:id',<%= (authenticate)? " authenticate(),":"" %> function($id) use($app) {
-		$<%= entity.name %> = <%= _.capitalize(entity.name) %>::find($id);
+		$<%= entity.name %> = <%= _.classify(entity.name) %>::find($id);
 		if (is_null($<%= entity.name %>)) {
 			$app->response->status(404);
 			$app->stop();
@@ -158,7 +169,7 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 		try {
 			$body = $app->request->getBody();
 			$request = json_decode($body, true);
-			$<%= entity.name %> = <%= _.capitalize(entity.name) %>::find($id);
+			$<%= entity.name %> = <%= _.classify(entity.name) %>::find($id);
 			if (is_null($<%= entity.name %>)) {
 				$app->response->status(404);
 				$app->stop();
@@ -207,7 +218,7 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 	// Delete <%= pluralize(entity.name) %> with ID
 	$app->delete('/<%= pluralize(entity.name) %>/:id',<%= (authenticate)? " authenticate(),":"" %> function($id) use($app) {
 		try {
-			$<%= entity.name %> = <%= _.capitalize(entity.name) %>::find($id);
+			$<%= entity.name %> = <%= _.classify(entity.name) %>::find($id);
 			if (is_null($<%= entity.name %>)) {
 				$app->response->status(404);
 				$app->stop();

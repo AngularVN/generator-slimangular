@@ -3,7 +3,7 @@
  * AuthToken Model 
  */
 class AuthToken extends Illuminate\Database\Eloquent\Model {
-	protected $table = 'users_tokens';
+	protected $table = 'auth_token';
 
 	protected $fillable = array('id');
 	public $incrementing = false;

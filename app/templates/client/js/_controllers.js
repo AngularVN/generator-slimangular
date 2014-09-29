@@ -151,7 +151,7 @@ angular.module("<%= baseName %>.controllers", [])
 					} else {
 						path = DEFAULT_ROUTE;
 					}
-					return $location.path(path);
+					$location.path(path);
 				});
 			}
 		};
