@@ -7,16 +7,13 @@ angular.module('<%= baseName %>')
 		return {
 			"default": {
 			 	<% _.each(attrs, function (attr) { %>"<%= attr.attrName.replace(" ", "_").toLowerCase() %>": "",
-      			<% }); %>
-          		"id": ""
+      			<% }); %>"id": ""
 			},
 			create: function(params) {
 				return $http.post(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>", params);
 			},
 			get: function(id, params) {
-				return $http.get(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>/" + id, {
-					params: params
-				});
+				return $http.get(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>/" + id, {params: params});
 			},
 			update: function(id, params) {
 				return $http.put(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>/" + id, params);
@@ -25,9 +22,7 @@ angular.module('<%= baseName %>')
 				return $http["delete"](DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>/" + id);
 			},
 			search: function(params) {
-				return $http.get(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>", {
-					params: params
-				});
+				return $http.get(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>", {params: params});
 			}
 		};
 	}

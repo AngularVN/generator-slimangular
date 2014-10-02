@@ -127,7 +127,8 @@ SlimangularGenerator.prototype.files = function files() {
 		this.name = entity.name;
 		this.attrs = entity.attrs;
 		var d = new Date();
-		var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds() + d.getMilliseconds();;
+		var dateStr = '' + new Date().getTime();
+		//d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
 		this.template('../../templates/client/styles-less/_model.less', clientLessDir + entity.name.toLowerCase() + '.less');
 		this.template('../../templates/server/models/_model.php', modelsDir + _s.classify(entity.name) + '.php');
 		this.template('../../templates/server/config/_migration.php', migrationsDir + dateStr + '_Create' + _s.classify(entity.name) + '.php');
@@ -142,5 +143,6 @@ SlimangularGenerator.prototype.files = function files() {
 		this.template('../../templates/client/js/_model-service.js', publicEntityJsDir + entity.name + '-service.js');
 		this.template('../../templates/client/views/_models.html', publicEntityViewDir + pluralize(entity.name) + '.html');
 		this.template('../../templates/client/views/_model-modal.html', publicEntityViewDir + entity.name + '-modal.html');
+
 	}.bind(this));
 };
