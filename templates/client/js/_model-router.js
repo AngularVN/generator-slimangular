@@ -5,10 +5,10 @@ angular.module('<%= baseName %>')
     $routeProvider
       .when('/<%= pluralize(name) %>', {
         templateUrl: 'views/<%= name %>/<%= pluralize(name) %>.html',
-        controller: '<%= _.capitalize(name) %>Ctrl',
+        controller: '<%= _.classify(name) %>Ctrl',
         resolve:{
-          resolved<%= _.capitalize(name) %>: ['<%= _.capitalize(name) %>', function (<%= _.capitalize(name) %>) {
-            return <%= _.capitalize(name) %>.search({});
+          resolved<%= _.classify(name) %>: ['<%= _.classify(name) %>', function (<%= _.classify(name) %>) {
+            return <%= _.classify(name) %>.search({});
           }]
         }
       })
