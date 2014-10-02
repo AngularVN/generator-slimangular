@@ -1,0 +1,8 @@
+*~
+.tmp
+*.swp
+.DS_Store
+.sass-cache
+dist
+node_modules
+public/bower_components

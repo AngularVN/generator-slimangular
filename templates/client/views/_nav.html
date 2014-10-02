@@ -1,0 +1,12 @@
+<div id="nav-wrapper">
+    <ul data-collapse-nav data-highlight-active data-ng-controller="NavCtrl" data-slim-scroll id="nav">
+        <li>
+            <a href="#/"><i class="fa fa-home"></i><span> Home</span></a>
+        </li>
+        <% _.each(entities, function (entity) { %>
+        <li>
+            <a href="/#/<%= pluralize(entity.name) %>"><i class="fa fa-folder"></i> <span> <%= _.capitalize(pluralize(entity.name)) %></span></a>
+        </li>
+        <% }); %>
+    </ul>
+</div>

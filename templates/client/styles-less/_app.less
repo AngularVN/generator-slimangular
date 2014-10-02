@@ -1,0 +1,4 @@
+@import "common.less";
+<% _.each(entities, function (entity) { %>
+@import "<%= entity.name.toLowerCase() %>.less";<% }); %>
+@import "../bower_components/bootstrap/less/bootstrap.less";
