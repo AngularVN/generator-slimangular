@@ -180,6 +180,5 @@ SlimangularGenerator.prototype.app = function app() {
     this.copy('server/models/_AuthToken.php', modelsDir + 'AuthToken.php');
     this.copy('server/models/_Role.php', modelsDir + 'Role.php');
     this.copy('server/models/_User.php', modelsDir + 'User.php');
-    this.copy('server/models/_UserCredential.php', modelsDir + 'UserCredential.php');
   }
 };

@@ -48,11 +48,6 @@ class User extends Illuminate\Database\Eloquent\Model {
 		return $this->email;
 	}
 
-	public function credential()
-	{
-		return $this->hasOne('UserCredential');
-	}
-
 	public function roles()
 	{
 		return $this->belongsToMany('Role');
@@ -79,38 +74,7 @@ class User extends Illuminate\Database\Eloquent\Model {
 		return $this->hasRole('admin');
 	}
 
-	public function isMod($array = array('admin', 'manager')) {
-		return in_array($this->group->name, $array);
-	}
-
 	public function isOwner($id = 0) {
-		return (($id === $this->id)||$this->isMod||$this->isAdmin);
-	}
-
-	public function fullName() {
-		$fullName = array();
-		if ($this->meta->first_name != "") {
-			$fullName[] = $this->meta->first_name;
-		}
-		if ($this->meta->last_name != "") {
-			$fullName[] = $this->meta->last_name;
-		}
-
-		return implode(" ", $fullName);
-	}
-
-	public function getRememberToken()
-	{
-		return $this->remember_token;
-	}
-
-	public function setRememberToken($value)
-	{
-		$this->remember_token = $value;
-	}
-
-	public function getRememberTokenName()
-	{
-		return 'remember_token';
+		return (($id === $this->id)||$this->isAdmin);
 	}
 }
