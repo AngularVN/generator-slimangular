@@ -147,7 +147,7 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 					$app->response->status(201);
 					echo $<%= entity.name %>->toJson();
 				}
-				else echo json_encode(array("code" =>400, "message" => $errors));
+				else echo json_encode(array("code" => 400, "message" => $errors));
 		} catch (Exception $e) {
 			$app->response()->status(400);
 			$app->response()->header('X-Status-Reason', $e->getMessage());
@@ -207,7 +207,7 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 				$app->response->status(201);
 				echo $<%= entity.name %>->toJson();
 			}
-			else echo json_encode(array("code" =>400, "message" => $errors));
+			else echo json_encode(array("code" => 400, "message" => $errors));
 
 		} catch (Exception $e) {
 			$app->response()->status(400);

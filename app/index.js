@@ -102,7 +102,6 @@ SlimangularGenerator.prototype.askFor = function askFor() {
 };
 
 SlimangularGenerator.prototype.app = function app() {
-
   this.entities = [];
   this.generatorConfig = {
     "baseName": this.baseName,
@@ -117,14 +116,15 @@ SlimangularGenerator.prototype.app = function app() {
   };
   this.generatorConfigStr = JSON.stringify(this.generatorConfig, null, '\t');
 
-  this.template('_generator.json', 'generator.json');
-  this.template('_package.json', 'package.json');
-  this.template('_bower.json', 'bower.json');
-  this.template('bowerrc', '.bowerrc');
-  this.template('Gruntfile.coffee', 'Gruntfile.coffee');
-  this.copy('gitignore', '.gitignore');
-  this.copy('editorconfig', '.editorconfig');
-  this.copy('jshintrc', '.jshintrc');
+  var tpl = '../../templates/';
+  this.template(tpl + '_generator.json', 'generator.json');
+  this.template(tpl + '_package.json', 'package.json');
+  this.template(tpl + '_bower.json', 'bower.json');
+  this.template(tpl + 'bowerrc', '.bowerrc');
+  this.template(tpl + 'Gruntfile.coffee', 'Gruntfile.coffee');
+  this.copy(tpl + 'gitignore', '.gitignore');
+  this.copy(tpl + 'editorconfig', '.editorconfig');
+  this.copy(tpl + 'jshintrc', '.jshintrc');
 
   var serverDir = 'server/';
   var configDir = serverDir + 'config/';
@@ -141,17 +141,17 @@ SlimangularGenerator.prototype.app = function app() {
   this.mkdir(publicDir);
   this.mkdir(lessDir);
 
-  this.template('_composer.json', 'composer.json');
-  this.template('server/_app.php', serverDir + 'app.php');
-  this.template('server/config/_app.php', configDir + 'app.php');
-  this.template('server/config/_phpmig.php', configDir + 'phpmig.php');
-  this.template('server/helpers/_validator.php', helperDir + 'validator.php');
-  this.template('server/helpers/_restresponse.php', helperDir + 'restresponse.php');
-  this.template('client/_index.php', publicDir + 'index.php');
-  this.copy('client/htaccess', publicDir + '.htaccess');
-  this.copy('client/favicon.ico', publicDir + 'favicon.ico');
-  this.copy('client/404.html', publicDir + '404.html');
-  this.copy('client/robots.txt', publicDir + 'robots.txt');
+  this.template(tpl + '_composer.json', 'composer.json');
+  this.template(tpl + 'server/_app.php', serverDir + 'app.php');
+  this.template(tpl + 'server/config/_app.php', configDir + 'app.php');
+  this.template(tpl + 'server/config/_phpmig.php', configDir + 'phpmig.php');
+  this.template(tpl + 'server/helpers/_validator.php', helperDir + 'validator.php');
+  this.template(tpl + 'server/helpers/_restresponse.php', helperDir + 'restresponse.php');
+  this.template(tpl + 'client/_index.php', publicDir + 'index.php');
+  this.copy(tpl + 'client/htaccess', publicDir + '.htaccess');
+  this.copy(tpl + 'client/favicon.ico', publicDir + 'favicon.ico');
+  this.copy(tpl + 'client/404.html', publicDir + '404.html');
+  this.copy(tpl + 'client/robots.txt', publicDir + 'robots.txt');
 
   var publicCssDir = publicDir + 'css/';
   var publicJsDir = publicDir + 'js/';
@@ -159,26 +159,25 @@ SlimangularGenerator.prototype.app = function app() {
   this.mkdir(publicCssDir);
   this.mkdir(publicJsDir);
   this.mkdir(publicViewDir);
-  this.copy('client/styles-less/app.less', lessDir + 'app.less');
-  this.template('client/js/_app.js', publicJsDir + 'app.js');
-  this.template('client/js/_filters.js', publicJsDir + 'filters.js');
-  this.template('client/js/_services.js', publicJsDir + 'services.js');
-  this.template('client/js/_directives.js', publicJsDir + 'directives.js');
-  this.template('client/js/_controllers.js', publicJsDir + 'controllers.js');
+  this.copy(tpl + 'client/styles-less/app.less', lessDir + 'app.less');
+  this.template(tpl + 'client/js/_app.js', publicJsDir + 'app.js');
+  this.template(tpl + 'client/js/_filters.js', publicJsDir + 'filters.js');
+  this.template(tpl + 'client/js/_services.js', publicJsDir + 'services.js');
+  this.template(tpl + 'client/js/_directives.js', publicJsDir + 'directives.js');
+  this.template(tpl + 'client/js/_controllers.js', publicJsDir + 'controllers.js');
 
-  this.template('client/_index.html', publicDir + 'index.html');
-  this.template('client/views/_nav.html', publicViewDir + 'nav.html');
-  this.template('client/views/_flash.html', publicViewDir + 'flash.html');
-  this.template('client/views/_signin.html', publicViewDir + 'signin.html');
-  this.template('client/views/_header.html', publicViewDir + 'header.html');
-  this.template('client/js/home/_home-controller.js', publicJsDir + 'home/home-controller.js');
-  this.template('client/views/home/_home.html', publicViewDir + 'home/home.html');
+  this.template(tpl + 'client/_index.html', publicDir + 'index.html');
+  this.template(tpl + 'client/views/_nav.html', publicViewDir + 'nav.html');
+  this.template(tpl + 'client/views/_flash.html', publicViewDir + 'flash.html');
+  this.template(tpl + 'client/views/_signin.html', publicViewDir + 'signin.html');
+  this.template(tpl + 'client/views/_header.html', publicViewDir + 'header.html');
+  this.template(tpl + 'client/js/home/_home-controller.js', publicJsDir + 'home/home-controller.js');
+  this.template(tpl + 'client/views/home/_home.html', publicViewDir + 'home/home.html');
   if (this.authenticate) {
     var d = new Date();
     var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
-    this.template('server/config/_authtoken.php', migrationsDir + dateStr + '_CreateAuthToken' + '.php');
-    this.copy('server/models/_AuthToken.php', modelsDir + 'AuthToken.php');
-    this.copy('server/models/_Role.php', modelsDir + 'Role.php');
-    this.copy('server/models/_User.php', modelsDir + 'User.php');
+    this.copy(tpl + 'server/models/_AuthToken.php', modelsDir + 'AuthToken.php');
+    this.copy(tpl + 'server/models/_Role.php', modelsDir + 'Role.php');
+    this.copy(tpl + 'server/models/_User.php', modelsDir + 'User.php');
   }
 };

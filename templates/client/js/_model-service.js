@@ -21,7 +21,7 @@ angular.module('<%= baseName %>')
 			"delete": function(id) {
 				return $http["delete"](DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>/" + id);
 			},
-			search: function(params) {
+			query: function(params) {
 				return $http.get(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>", {params: params});
 			}
 		};

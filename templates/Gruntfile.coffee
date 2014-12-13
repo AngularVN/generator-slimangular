@@ -245,10 +245,10 @@ module.exports = (grunt) ->
                         "favicon.ico"
                         "index.php"
                         # bower components that has image, font dependencies
-                        "bower_components/font-awesome/css/*"
-                        "bower_components/font-awesome/fonts/*"
-                        "bower_components/weather-icons/css/*"
-                        "bower_components/weather-icons/font/*"
+                        # "bower_components/font-awesome/css/*"
+                        # "bower_components/font-awesome/fonts/*"
+                        # "bower_components/weather-icons/css/*"
+                        # "bower_components/weather-icons/font/*"
 
                         "fonts/**/*"
                         "i18n/**/*"

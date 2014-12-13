@@ -10,48 +10,7 @@ class User extends Illuminate\Database\Eloquent\Model {
 	protected $table = 'users';
 
 	protected $softDelete = true;
-
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
 	protected $hidden = array('deleted_at');
-
-	/**
-	 * Get the unique identifier for the user.
-	 *
-	 * @return mixed
-	 */
-	public function getAuthIdentifier()
-	{
-		return $this->getKey();
-	}
-
-	/**
-	 * Get the password for the user.
-	 *
-	 * @return string
-	 */
-	public function getAuthPassword()
-	{
-		return $this->password;
-	}
-
-	/**
-	 * Get the e-mail address where password reminders are sent.
-	 *
-	 * @return string
-	 */
-	public function getReminderEmail()
-	{
-		return $this->email;
-	}
-
-	public function credential()
-	{
-		return $this->hasOne('UserCredential');
-	}
 
 	public function roles()
 	{
@@ -75,28 +34,20 @@ class User extends Illuminate\Database\Eloquent\Model {
 		$this->roles()->sync(array_intersect($roles, $key_roles));
 	}
 
+	public function isAdmin($role = 'admin') {
+		return $this->hasRole($role);
+	}
+
+	public function isMod($role = 'mod') {
+		return $this->hasRole($role)||$this->isAdmin;
+	}
+
 	public function isAdmin($array = array('admin')) {
 		return $this->hasRole('admin');
 	}
 
-	public function isMod($array = array('admin', 'manager')) {
-		return in_array($this->group->name, $array);
-	}
-
 	public function isOwner($id = 0) {
-		return (($id === $this->id)||$this->isMod||$this->isAdmin);
-	}
-
-	public function fullName() {
-		$fullName = array();
-		if ($this->meta->first_name != "") {
-			$fullName[] = $this->meta->first_name;
-		}
-		if ($this->meta->last_name != "") {
-			$fullName[] = $this->meta->last_name;
-		}
-
-		return implode(" ", $fullName);
+		return (($id === $this->id)||$this->isMod);
 	}
 
 	public function getRememberToken()
