@@ -15,9 +15,8 @@ class <%= _.classify(name) %> extends Illuminate\Database\Eloquent\Model {
     <%  }
     if (attr.attrType == 'Integer' || attr.attrType == 'Float' || attr.attrType == 'Boolean') { %>
 
-    public function get<%= _.capitalize(attr.attrName).replace(" ", "_") %>($value)
-    {
-        return (<%= attr.attrType.toLowerCase() %>) $value;
+    public function get<%= _.classify(attr.attrName) %>($value) {
+        return (<%= attr.attrType.toLowerCase() %>)$value;
     }
     <% } %>
     <% }); %>

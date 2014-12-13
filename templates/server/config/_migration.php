@@ -37,7 +37,7 @@ class Create<%= _.classify(name) %> extends Migration
             %>;<%
              var belongs = attr.attrName.split("_").shift();
              if ("id" == attr.attrName.split("_").pop()){ %>
-            $table->foreign('<%= attr.attrName.replace(" ", "_").toLowerCase() %>')->references('id')->on('<%= pluralize(belongs) %>')->onDelete('cascade');
+            // $table->foreign('<%= attr.attrName.replace(" ", "_").toLowerCase() %>')->references('id')->on('<%= pluralize(belongs) %>')->onDelete('cascade');
             <%  }
             }); %>
         });
