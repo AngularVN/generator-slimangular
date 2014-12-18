@@ -1,29 +1,8 @@
-'use strict';
 
 angular.module('<%= baseName %>')
-.factory("<%= _.classify(name) %>", [
-	"$http", "DOMAIN",
-	function($http, DOMAIN) {
-		return {
-			"default": {
-			 	<% _.each(attrs, function (attr) { %>"<%= attr.attrName.replace(" ", "_").toLowerCase() %>": "",
-      			<% }); %>"id": ""
-			},
-			create: function(params) {
-				return $http.post(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>", params);
-			},
-			get: function(id, params) {
-				return $http.get(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>/" + id, {params: params});
-			},
-			update: function(id, params) {
-				return $http.put(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>/" + id, params);
-			},
-			"delete": function(id) {
-				return $http["delete"](DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>/" + id);
-			},
-			query: function(params) {
-				return $http.get(DOMAIN + "/<%= baseName %>/<%= pluralize(name) %>", {params: params});
-			}
-		};
-	}
-]);
+  .factory('resource<%= _.classify(name) %>', ['$resource', function (a) {
+    return a('<%= baseName %>/<%= pluralize(name) %>/:id', {}, {
+      get: { method: 'GET'},
+      update: { method: 'PUT'},
+      query: { method: 'GET', isArray: true},
+  }]);

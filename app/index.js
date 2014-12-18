@@ -159,7 +159,8 @@ SlimangularGenerator.prototype.app = function app() {
   this.mkdir(publicCssDir);
   this.mkdir(publicJsDir);
   this.mkdir(publicViewDir);
-  this.copy(tpl + 'client/styles-less/app.less', lessDir + 'app.less');
+  this.copy(tpl + 'client/styles-less/_common.less', lessDir + 'common.less');
+  this.template(tpl + 'client/styles-less/_app.less', lessDir + 'app.less');
   this.template(tpl + 'client/js/_app.js', publicJsDir + 'app.js');
   this.template(tpl + 'client/js/_filters.js', publicJsDir + 'filters.js');
   this.template(tpl + 'client/js/_services.js', publicJsDir + 'services.js');

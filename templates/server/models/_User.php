@@ -42,10 +42,6 @@ class User extends Illuminate\Database\Eloquent\Model {
 		return $this->hasRole($role)||$this->isAdmin;
 	}
 
-	public function isAdmin($array = array('admin')) {
-		return $this->hasRole('admin');
-	}
-
 	public function isOwner($id = 0) {
 		return (($id === $this->id)||$this->isMod);
 	}

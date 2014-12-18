@@ -4,5 +4,6 @@
 .DS_Store
 .sass-cache
 dist
+vendor
 node_modules
-public/bower_components
+client/bower_components

@@ -22,6 +22,8 @@ class CreateAuthToken extends Migration
             $table->engine = 'InnoDB';
             
             $table->increments('id')->unsigned();
+            $table->string('username')->unique();
+            $table->string('password', 32);
             $table->boolean('remember_token')->default(false);
             $table->enum('status', array('pending', 'active', 'inactive', 'banned'))->default('pending');
         });
@@ -56,19 +58,6 @@ class CreateAuthToken extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
-
-        $this->schema->create("users_credentials", function ($table)
-        {
-            $table->engine = 'InnoDB';
-
-            $table->increments('id')->unsigned();
-            $table->integer('user_id')->unsigned();
-            $table->string('username')->unique();
-            $table->string('password', 32);
-            $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
     }
 
     /**
@@ -80,6 +69,5 @@ class CreateAuthToken extends Migration
         $this->schema->drop("users");
         $this->schema->drop("role_user");
         $this->schema->drop("auth_token");
-        $this->schema->drop("users_credentials");
     }
 }

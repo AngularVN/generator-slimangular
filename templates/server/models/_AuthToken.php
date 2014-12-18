@@ -40,7 +40,7 @@ class AuthToken extends Illuminate\Database\Eloquent\Model {
 	 */
 	public static function login($username, $password)
 	{
-		$userCredential = UserCredential::where('username', $username)->first();
+		$userCredential = User::where('username', $username)->first();
 
 		if ($userCredential && ($userCredential->password==md5($password))) {
 			$authToken = new AuthToken();

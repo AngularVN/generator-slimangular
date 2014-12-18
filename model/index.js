@@ -235,16 +235,16 @@ SlimangularGenerator.prototype.files = function files() {
 
   var d = new Date();
   var tpl = '../../templates/';
+  var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
   var serverDir = 'server/';
   var configDir = serverDir + 'config/';
   var migrationsDir = configDir + 'migrations/';
   var modelsDir = serverDir + 'models/';
   var publicDir = 'client/';
   this.template(tpl + '_generator.json', 'generator.json');
-  this.template(tpl + 'models/_model.php', modelsDir + _s.classify(this.name) + '.php');
+  this.template(tpl + 'server/models/_model.php', modelsDir + _s.classify(this.name) + '.php');
   this.template(tpl + 'server/_app.php', serverDir + 'app.php');
-  var dateStr = '' + d.getFullYear() + (d.getMonth() + 1) + d.getDate() + d.getHours() + d.getMinutes() + d.getSeconds();
-  this.template('config/migrations/_migration.php', migrationsDir + dateStr + '_Create' + _s.classify(this.name) + '.php');
+  this.template(tpl + 'server/config/_migration.php', migrationsDir + dateStr + '_Create' + _s.classify(this.name) + '.php');
 
   var publicCssDir = publicDir + 'css/';
   var publicJsDir = publicDir + 'js/';
