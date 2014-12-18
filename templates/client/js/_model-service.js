@@ -5,4 +5,5 @@ angular.module('<%= baseName %>')
       get: { method: 'GET'},
       update: { method: 'PUT'},
       query: { method: 'GET', isArray: true},
+    });
   }]);
