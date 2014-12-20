@@ -76,20 +76,22 @@ function authenticate($role = 'member') {
 $app = new \Slim\Slim();
 
 $app->get('/', function() use ($app) {
+	$app->contentType('text/html');
 	readfile('index.html');
 	$app->stop();
 });
 
 <% if (authenticate) { %>
 $app->group('/<%= baseName %>/auth', function() use ($app) {
-	$app->contentType('application/json;charset=utf-8');
+	$app->contentType('application/json');
 	$app->post('/login', function() use($app) {
 		try {
-			$body = $app->request->getBody();
-			$request = json_decode($body, true);
-			$errors = array();
+			$request = $app->request();
+			$body    = $request->getBody();
+			$input   = json_decode($body, true);
+			$errors  = array();
 			$validator = Validator::make(
-				$request,
+				$input,
 				array(
 					"username" => "required",
 					"password" => "required",
@@ -97,7 +99,7 @@ $app->group('/<%= baseName %>/auth', function() use ($app) {
 			);
 			if ($validator->fails()) $errors = array_merge($errors, $validator->messages()->all('<li>:message</li>'));
 			if (count($errors) == 0) {
-				if ($authToken = AuthToken::login($request["username"], $request["password"])) {
+				if ($authToken = AuthToken::login($input["username"], $input["password"])) {
 					$app->response->status(201);
 					$resp = new RestResponse('200', "Ok", $authToken->toArray());
 					echo $resp->toJson();
@@ -137,20 +139,42 @@ $app->group('/<%= baseName %>/auth', function() use ($app) {
 /* begin <%= baseName %>/<%= pluralize(entity.name) %> */
 $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> function () use ($app) {
 	// Get ALL <%= pluralize(entity.name) %>
-	$app->contentType('application/json;charset=utf-8');
+	// 
+	$request = $app->request();
+	$query   = $request->params("query", '');
+	$page    = $request->params("page", 1);
+	$limit   = $request->params("limit", 20);
+	$order   = $request->params("order", 'id');
+	$sort    = $request->params("sort", 'DESC');
+	$offset  = ((int)$page -1) * (int)$limit;
+
+	$app->contentType('application/json');
 	$app->get('/<%= pluralize(entity.name) %>', function() {
-		$<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::all();
+		// $<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::all();
+		if ($query) {
+			<% var concat = []; _.each(entity.attrs, function (attr) {
+				if (attr.attrType === "String" || attr.attrType === "Char" || attr.attrType === "Text") {
+					concat.push(_.underscored(attr.attrName));
+				}
+			});
+			%>
+			$<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::whereRaw("CONCAT(<%= concat.join(', ') %>) LIKE ?", array('%'.$query.'%'))->skip($offset)->take($limit)->get();
+		}
+		else{
+			$<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::all()->skip($offset)->take($limit)->get();
+		}
 		echo $<%= pluralize(entity.name) %>->toJson();
 	});
 
 	// Create <%= pluralize(entity.name) %>
 	$app->post('/<%= pluralize(entity.name) %>',<%= (authenticate)? " authenticate(),":"" %> function() use($app) {
 		try {
-				$body = $app->request->getBody();
-				$request = json_decode($body, true);
-				$errors = array();
+				$request = $app->request();
+				$body    = $request->getBody();
+				$input   = json_decode($body, true);
+				$errors  = array();
 				$validator = Validator::make(
-					$request,
+					$input,
 					array(<% _.each(entity.attrs, function (attr) {
 							if (attr.required||attr.minLength||attr.maxLength||attr.min||attr.max) { 
 								var validator="required"; 
@@ -170,14 +194,14 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 								} else if (attr.attrType === "Float"){
 									validator += "|regex:/^[+-]?\d+\.\d+, ?[+-]?\d+\.\d+$/";
 								}%>
-						"<%= attr.attrName.replace(" ", "_").toLowerCase() %>" => "<%= validator %>",<% }}); %>
+						"<%= _.underscored(attr.attrName) %>" => "<%= validator %>",<% }}); %>
 					)
 				);
 				if ($validator->fails()) $errors = array_merge($errors, $validator->messages()->all('<li>:message</li>'));
 				if (count($errors) == 0) {
 					$<%= entity.name %> = new <%= _.classify(entity.name) %>;
 					<% _.each(entity.attrs, function (attr) { %>
-					$<%= entity.name%>-><%= attr.attrName.replace(" ", "_").toLowerCase() %> = isset($request['<%= attr.attrName.replace(" ", "_").toLowerCase() %>'])?$request['<%= attr.attrName.replace(" ", "_").toLowerCase() %>']:NULL;<% }); %>
+					$<%= entity.name%>-><%= _.underscored(attr.attrName) %> = isset($input['<%= _.underscored(attr.attrName) %>'])?$input['<%= _.underscored(attr.attrName) %>']:NULL;<% }); %>
 					$<%= entity.name %>->save();
 					$app->response->status(201);
 					echo $<%= entity.name %>->toJson();
@@ -202,8 +226,9 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 	// Update <%= pluralize(entity.name) %> with ID
 	$app->put('/<%= pluralize(entity.name) %>/:id', function($id) use($app) {
 		try {
-			$body = $app->request->getBody();
-			$request = json_decode($body, true);
+			$request = $app->request();
+			$body    = $request->getBody();
+			$input   = json_decode($body, true);
 			$<%= entity.name %> = <%= _.classify(entity.name) %>::find($id);
 			if (is_null($<%= entity.name %>)) {
 				$app->response->status(404);
@@ -211,7 +236,7 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 			}
 			$errors = array();
 			$validator = Validator::make(
-				$request,
+				$input,
 				array(<% _.each(entity.attrs, function (attr) {
 						if (attr.required||attr.minLength||attr.maxLength||attr.min||attr.max) {
 							var validator="required"; 
@@ -231,13 +256,13 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 							} else if (attr.attrType === "Float"){
 								validator += "|regex:/^[+-]?\d+\.\d+, ?[+-]?\d+\.\d+$/";
 							}%>
-					"<%= attr.attrName.replace(" ", "_").toLowerCase() %>" => "<%= validator %>",<% }}); %>
+					"<%= _.underscored(attr.attrName) %>" => "<%= validator %>",<% }}); %>
 				)
 			);
 			if ($validator->fails()) $errors = array_merge($errors, $validator->messages()->all('<li>:message</li>'));
 			if (count($errors) == 0) {
 				<% _.each(entity.attrs, function (attr) { %>
-				$<%= entity.name%>-><%= attr.attrName.replace(" ", "_").toLowerCase() %> = isset($request['<%= attr.attrName.replace(" ", "_").toLowerCase() %>'])?$request['<%= attr.attrName.replace(" ", "_").toLowerCase() %>']:$<%= entity.name%>-><%= attr.attrName.replace(" ", "_").toLowerCase() %>;<% }); %>
+				$<%= entity.name%>-><%= _.underscored(attr.attrName) %> = isset($input['<%= _.underscored(attr.attrName) %>'])?$input['<%= _.underscored(attr.attrName) %>']:$<%= entity.name%>-><%= _.underscored(attr.attrName) %>;<% }); %>
 				$<%= entity.name %>->save();
 				$app->response->status(201);
 				echo $<%= entity.name %>->toJson();
