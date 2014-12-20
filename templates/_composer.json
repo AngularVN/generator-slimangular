@@ -2,8 +2,7 @@
     "name": "<%= baseName %>",    
     "require": {
         "php": ">=5.4.0",
-        "slim/slim": "2.*",
-        "slim/extras": "2.*",
+        "slim/slim": "2.5.*",
         "illuminate/database": "*",
         "illuminate/validation": "*",
         "illuminate/translation": "*",

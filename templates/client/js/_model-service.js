@@ -4,6 +4,6 @@ angular.module('<%= baseName %>')
     return a('<%= baseName %>/<%= pluralize(name) %>/:id', {}, {
       get: { method: 'GET'},
       update: { method: 'PUT'},
-      query: { method: 'GET', isArray: true},
+      query: { method: 'GET'},
     });
   }]);

@@ -172,18 +172,17 @@ $app->group('/<%= baseName %>/auth', function() use ($app) {
 
 /* begin <%= baseName %>/<%= pluralize(entity.name) %> */
 $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> function () use ($app) {
-	// Get ALL <%= pluralize(entity.name) %>
-	// 
-	$params = $app->request()->params();
-	$query  = isset($params['query']) ? $params['query'] : NULL;
-	$page   = isset($params['page']) ? $params['page'] : 1;
-	$limit  = isset($params['limit']) ? $params['limit'] : 20;
-	$order  = isset($params['order']) ? $params['order'] : 'id';
-	$sort   = isset($params['sort']) ? $params['sort'] : 'DESC';
-	$offset = ((int)$page -1) * (int)$limit;
-
 	$app->contentType('application/json');
-	$app->get('/<%= pluralize(entity.name) %>', function() {
+
+	// Get ALL <%= pluralize(entity.name) %>
+	$app->get('/<%= pluralize(entity.name) %>', function() use($app) {
+		$request = $app->request();
+		$query   = $request->get("query", NULL);
+		$page    = $request->get("page", 1);
+		$limit   = $request->get("limit", 20);
+		$order   = $request->get("order", 'id');
+		$sort    = $request->get("sort", 'DESC');
+		$offset  = ((int)$page -1) * (int)$limit;
 		// $<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::all();
 		if (isset($query)) {
 			<% var concat = []; _.each(entity.attrs, function (attr) {
@@ -191,13 +190,22 @@ $app->group('/<%= baseName %>',<%= (authenticate)? " authenticate(),":"" %> func
 					concat.push(_.underscored(attr.attrName));
 				}
 			});
-			%>
-			$<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::whereRaw("CONCAT(<%= concat.join(', ') %>) LIKE ?", array('%'.$query.'%'))->take($limit)->skip($offset)->get();
+			%>$entity = <%= _.classify(entity.name) %>::whereRaw("CONCAT(<%= concat.join(', ') %>) LIKE ?", array('%'.$query.'%'));
+			$<%= pluralize(entity.name) %> = $entity->take($limit)->offset($offset)->orderBy($order, $sort)->get();
 		}
 		else{
-			$<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::all()->take($limit)->skip($offset)->get();
+			$entity = <%= _.classify(entity.name) %>::all();
+			$<%= pluralize(entity.name) %> = <%= _.classify(entity.name) %>::take($limit)->offset($offset)->orderBy($order, $sort)->get();
 		}
-		echo $<%= pluralize(entity.name) %>->toJson();
+		$total = $entity->count();
+		echo json_encode(array(
+			"total"   => $total,
+			"page"    => $page,
+			"limit"   => $limit,
+			"from"    => (($total==0)?0:1),
+			"to"      => $offset + $<%= pluralize(entity.name) %>->count(),
+			'results' => $<%= pluralize(entity.name) %>->toArray()
+			));
 	});
 
 	// Create <%= pluralize(entity.name) %>

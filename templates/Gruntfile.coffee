@@ -269,6 +269,12 @@ module.exports = (grunt) ->
                     cwd: ".tmp/images"
                     dest: "<%%= yeoman.dist %>/images"
                     src: ["generated/*"]
+                ,
+                    expand: true
+                    flatten: true
+                    cwd: "<%%= yeoman.app %>"
+                    dest: "<%%= yeoman.dist %>/js"
+                    src: ["bower_components/underscore/underscore-min.map"]
                 ]
 
             styles:
